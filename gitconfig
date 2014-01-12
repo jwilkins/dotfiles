@@ -1,0 +1,8 @@
+[user]
+	name = Jonathan Wilkins
+	email = jwilkins@bitland.net
+
+[branch "master"]
+  remote = origin
+  merge = refs/heads/master
+
