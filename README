@@ -1,3 +1,27 @@
+Installing
+==========
+  source <path to dotfiles>/fresh/build/shell.sh
+
+- use fresh to link
+  - antigen
+  - fresh
+  - irbrc
+  - gitconfig
+
+
+- get fresh to add antigen and fresh stanzas to ~/.zshrc
+
+- detect osx and run osx defaults config from os/osx
+
+- vim
+- vundle
+- vimrc
+- env
+- chruby/rbenv
+- pyenv
+
+
+
 Adding externals
 ================
 Use subtrees (from http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/):
