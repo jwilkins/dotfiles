@@ -1,0 +1,15 @@
+Adding externals
+================
+Use subtrees (from http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/):
+
+Add remote so it's easier to reference:
+  git remote add -f <name> <url>
+eg
+  git remote add -f fresh https://github.com/freshshell/fresh.git
+
+
+Bring it in while minimizing git log noise
+  git subtree add --prefix <rel path> <name> <commit ref> --squash
+eg
+  git subtree add --prefix fresh fresh master --squash
+
