@@ -81,11 +81,15 @@ set textwidth=0
 set wrapmargin=0
 set formatoptions+=l
 
+set undofile
+set undodir=/Users/jwilkins/.vimundo
 "" Colors
 set t_Co=256
 " need the droid slashed for powerline
 " http://alexyoung.org/2012/01/13/using-powerline-with-mac-os/
-let g:Powerline_symbols = 'unicode'
+"let g:Powerline_symbols = 'unicode'
+let g:Powerline_symbols = 'fancy'
+
 set encoding=utf-8
 set laststatus=2
 "set t_Sf=[3%dm
@@ -114,7 +118,10 @@ set rnu
 
 let mapleader=","
 
-nnoremap <Space> gwap<CR>
+nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+vnoremap <Space> zf
+
+"nnoremap <Space> gwap<CR>
 "map <Esc>[B <Down>           " for tmux, may help arrow key behavior
 noremap Y y$                  " Yank to the end of line
 vmap D y'>p                   " Duplicate selected below
@@ -237,4 +244,16 @@ highlight BadWhitespace ctermbg=1
 " Remove trailing whitespace on <leader>S
 nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 
+" :BundleList          - list configured bundles
+" :BundleInstall(!)    - install(update) bundles
+"set rtp+=~/.janus/bundle/vundle/
+"call vundle#rc()
+
+Bundle 'gmarik/vundle'
+"Bundle 'Valloric/YouCompleteMe'
+"Bundle 'tpope/vim-eunuch'
+"Bundle 'airblade/vim-gitgutter'
+"Bundle 'vim-scripts/renamer'
+
+filetype plugin indent on     " required for vundle
 
