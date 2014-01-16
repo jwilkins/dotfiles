@@ -1,6 +1,6 @@
-require 'rubygems'
+
 begin
-require 'utility_belt'
+#require 'utility_belt'
 rescue LoadError
 end
 require 'irb/completion'

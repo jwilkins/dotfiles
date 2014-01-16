@@ -1,0 +1,34 @@
+fresh freshshell/fresh bin/fresh --bin
+FRESH_LOCAL=$HOME/jforest/dotfiles
+
+fresh nojhan/liquidprompt liquidprompt
+#fresh square/maximum-awesome --file=vimrc
+
+fresh jasoncodes/dotfiles shell/aliases/ruby.sh
+
+fresh foobacca/dotfiles bash/dircolors
+fresh seebi/dircolors-solarized dircolors.ansi-universal --file=~/.dircolors
+
+#fresh bin/\* --bin
+
+fresh freshrc
+fresh ctags --file
+fresh gitignore --file
+#fresh irbrc --file
+fresh gemrc --file
+#fresh pryrc --file
+#fresh tmux.conf --file
+#fresh vimrc.after --file
+
+
+#fresh erikw/tmux-powerline
+#fresh Lokaltog/powerline font --file=$FRESH_LOCAL/fonts/
+#fresh Lokaltog/powerline-fonts SourceCodePro --file=$FRESH_LOCAL/fonts/
+#fresh Lokaltog/powerline powerline/bindings/tmux/powerline.conf --file=$FRESH_LOCAL/.tmux.conf
+fresh freshshell/fresh bin/fresh --bin
+fresh nojhan/liquidprompt liquidprompt
+fresh nojhan/liquidprompt liquidprompt
+fresh jasoncodes/dotfiles shell/aliases/ruby.sh
+fresh jasoncodes/dotfiles shell/aliases/ruby.sh
+fresh foobacca/dotfiles bash/dircolors
+fresh foobacca/dotfiles bash/dircolors
