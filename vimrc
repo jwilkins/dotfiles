@@ -1,14 +1,3 @@
-"<<<<<<< HEAD
-" don't bother with vi compatibility
-set nocompatible
-set t_Co=256
-
-" enable syntax highlighting
-syntax enable
-
-" configure Vundle
-filetype on " without this vim emits a zero exit status, later, because of :ft off
-"========================================================
 " -------------------------------------------------------------------------
 " Motion:
 "   % - Jump to matching brace (or back to previous)
@@ -86,6 +75,8 @@ filetype on " without this vim emits a zero exit status, later, because of :ft o
 " Basic Stuff--------------------------------------------------------------
 set nocp
 syntax on
+set t_Co=256
+filetype on " without this vim emits a zero exit status, later, because of :ft off
 
 " Line wrap without line breaks
 set wrap
@@ -98,9 +89,12 @@ set formatoptions+=l
 set shiftwidth=2
 set tabstop=2
 set expandtab
-
+set autochdir
+set backupdir=/Users/jwilkins/.vimbackup
+"call mkdir(set backupdir?, 'p')
 set undofile
 set undodir=/Users/jwilkins/.vimundo
+"call mkdir(set undodir?, 'p')
 
 " Colors
 "color calmar256-dark
@@ -136,17 +130,17 @@ let mapleader=","
 nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
 vnoremap <Space> zf
 
-"vmap <A-]> >gv
-"vmap <A-[> <gv
+vmap <“> >gv
+vmap <‘> <gv
 
-"nmap <A-]> >>
-"nmap <A-[> <<
+nmap <“> >>
+nmap <‘> <<
 
-"omap <A-]> >>
-"omap <A-[> <<
+omap <“> >>
+omap <‘> <<
 
-"imap <A-]> <Esc>>>i
-"imap <A-[> <Esc><<i
+imap <“> <Esc>>>i
+imap <‘> <Esc><<i
 
 " blackhole register is "_
 " this makes xx equivalent to cut and dd deletes without yanking
@@ -176,7 +170,7 @@ nnoremap <silent> <F8> :set hls!<CR>  " Highlighting of search terms
 map <silent> <F9> :NERDTreeToggle<CR>
 nnoremap map <silent> <F9> :NERDTreeToggle<CR>
 "nnoremap <silent> <F8> :TlistToggle<CR>  " ctrl-w ctrl-w to switch pane
-:nmap <C-N><C-N> :set invnumber<CR>
+nmap <C-N><C-N> :set invnumber<CR>
 
 
 "map <silent> <leader>N :set number!<CR>
@@ -263,13 +257,13 @@ set iskeyword=48-57,65-90,97-122
 " automatically choose the longest common completion
 set completeopt=longest,menuone
 " enter selects completion
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
-  \ '<C-n><C-r>=pumvisible() ? "\<C-n>" : ""<CR>'
-  \ '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
+"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+"inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
+"  \ '<C-n><C-r>=pumvisible() ? "\<C-n>" : ""<CR>'
+"  \ '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
-inoremap <expr> <M-,> pumvisible() ? '<C-n>' :
-  \ '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
+"inoremap <expr> <M-,> pumvisible() ? '<C-n>' :
+"  \ '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
 "autocmd BufWritePre * <Esc>ms <Bar> :%s/\s\+$//e <Bar> 's <Bar> :delm s
 "autocmd BufWritePre * exe "normal maHmb" | :%s/\s*$// | exe "normal `bzt`a"
@@ -286,48 +280,31 @@ nnoremap <leader>S ms :%s/\s\+$//<cr>:let @/=''<CR>'s
 "set list listchars=tab:>-,trail:_
 set list listchars=tab:»·,trail:·
 
-" ------- Bundle stuff ----------------
-" :BundleList          - list configured bundles
-" :BundleInstall(!)    - install(update) bundles
-" commandline install: vim +BundleInstall +qall
-">>>>>>> 71542cc3b5fa1c9c4fed5f4237b1fda1b7752d85
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-
-"<<<<<<< HEAD
-" install Vundle bundles
-if filereadable(expand("~/.vimrc.bundles"))
-  source ~/.vimrc.bundles
-  source ~/.vimrc.bundles.local
-endif
-
-" ensure ftdetect et al work by including this after the Vundle stuff
-filetype plugin indent on
-
+" Maximum Awesome stuff? ------------------------
 set autoindent
-set autoread                                                 " reload files when changed on disk, i.e. via `git checkout`
-set backspace=2                                              " Fix broken backspace in some setups
-set backupcopy=yes                                           " see :help crontab
-"set clipboard=unnamed                                        " yank and paste with the system clipboard
-set directory-=.                                             " don't store swapfiles in the current directory
+set autoread                    " reload files when changed on disk, i.e. via `git checkout`
+set backspace=2                 " Fix broken backspace in some setups
+set backupcopy=yes              " see :help crontab
+"set clipboard=unnamed          " yank and paste with the system clipboard
+"set directory-=.                " don't store swapfiles in the current directory
+:set directory=$HOME/.vim/swapfiles//
 set encoding=utf-8
-set expandtab                                                " expand tabs to spaces
-set ignorecase                                               " case-insensitive search
-set incsearch                                                " search as you type
-set laststatus=2                                             " always show statusline
-set list                                                     " show trailing whitespace
+set expandtab                   " expand tabs to spaces
+set ignorecase                  " case-insensitive search
+set incsearch                   " search as you type
+set laststatus=2                " always show statusline
+set list                        " show trailing whitespace
 set listchars=tab:▸\ ,trail:▫
-set number                                                   " show line numbers
-set ruler                                                    " show where you are
-set scrolloff=3                                              " show context above/below cursorline
-set shiftwidth=2                                             " normal mode indentation commands use 2 spaces
+set number                      " show line numbers
+set ruler                       " show where you are
+set scrolloff=3                 " show context above/below cursorline
+set shiftwidth=2                " normal mode indentation commands use 2 spaces
 set showcmd
-set smartcase                                                " case-sensitive search if any caps
-set softtabstop=2                                            " insert mode tab and backspace use 2 spaces
-set tabstop=8                                                " actual tabs occupy 8 characters
+set smartcase                   " case-sensitive search if any caps
+set softtabstop=2               " insert mode tab and backspace use 2 spaces
+set tabstop=8                   " actual tabs occupy 8 characters
 set wildignore=log/**,node_modules/**,target/**,tmp/**,*.rbc
-set wildmenu                                                 " show a navigable menu for tab completion
+set wildmenu                    " show a navigable menu for tab completion
 set wildmode=longest,list,full
 
 " Enable basic mouse behavior such as resizing buffers.
@@ -354,6 +331,105 @@ nmap <leader><space> :call whitespace#strip_trailing()<CR>
 nmap <leader>g :GitGutterToggle<CR>
 nmap <leader>c <Plug>Kwbd
 map <silent> <leader>V :source ~/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
+
+" End Maximum Awesome stuff -------------------------------
+"
+" ------- Bundle stuff ----------------
+" :BundleList          - list configured bundles
+" :BundleInstall(!)    - install(update) bundles
+" commandline install: vim +BundleInstall +qall
+filetype off
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" install Vundle bundles
+if filereadable(expand("~/.vimrc.bundles"))
+  source ~/.vimrc.bundles
+endif
+
+if filereadable(expand("~/.vimrc.bundles.local"))
+  source ~/.vimrc.bundles.local
+endif
+
+"===============================================================
+"Bundle 'gmarik/vundle'
+
+"Bundle 'Rainbow-Parentheses-Improved-and2'
+"let g:rainbow_active    = 1
+"let g:rainbow_operators = 1
+"Bundle 'amdt/vim-niji'  " fail
+"Bundle 'kien/rainbow_parentheses.vim'  " untested
+"Bundle 'oblitum/rainbow'  " works
+"au FileType ruby,c,cpp,objc,objcpp call rainbow#load()
+
+" Needs a git subtree add, have local mods
+"Bundle 'rainbow-end'
+"au FileType ruby call RainbowEndOn()
+
+"Bundle 'tpope/vim-unimpaired'  " in vimrc.bundles.local
+Bundle 'sjl/gundo.vim'
+Bundle 'flazz/vim-colorschemes'
+Bundle 'milkypostman/vim-togglelist'
+Bundle 'vim-scripts/AnsiEsc.vim'
+Bundle 'sjl/vitality.vim'
+"Bundle 'maxbrunsfeld/vim-yankstack'
+
+"Bundle 'YankRing.vim'
+"nnoremap <silent> <F1> :YRShow<CR>
+"let g:yankring_replace_n_pkey = '<m-p>'
+"let g:yankring_replace_n_nkey = '<m-n>'
+
+"Bundle 'Valloric/YouCompleteMe'
+"Bundle 'tpope/vim-eunuch'
+"Bundle 'vim-scripts/renamer'
+
+Bundle 'openssl.vim'
+let g:openssl_backup = 1
+
+
+" using slimux instead
+"Bundle 'jpalardy/vim-slime'
+"let g:slime_target = "tmux"
+"let g:slime_default_config = {"socket_name": "default", "target_pane": "6"}
+
+"Bundle 'altercation/vim-colors-solarized' " in vimrc.bundles
+"color solarized
+set background=dark
+" solarized options
+let g:solarized_termcolors  = 256
+"let g:solarized_visibility = "high"
+"let g:solarized_contrast   = "high"
+let ruby_operators          = 1
+let ruby_space_errors       = 1
+"colorscheme solarized
+
+"Bundle 'airblade/vim-gitgutter' " in vimrc.bundles
+
+Bundle 'Lokaltog/vim-easymotion'
+
+Bundle 'vim-scripts/restore_view.vim'
+set viewoptions=cursor,folds,slash,unix
+" let g:skipview_files = ['*\.vim']
+
+"Bundle 'kien/ctrlp.vim'
+"let g:ctrlp_map = '<c-w>'
+"let g:ctrlp_cmd = 'CtrlP'
+
+Bundle 'godlygeek/tabular'
+" plugin usage:
+"   :Tabularize /=                    to align on =
+
+"not this Bundle 'Lokaltog/powerline'
+"Bundle 'Lokaltog/vim-powerline'
+" need the droid slashed for powerline
+" http://alexyoung.org/2012/01/13/using-powerline-with-mac-os/
+"let g:Powerline_symbols = 'unicode'
+"let g:Powerline_symbols = 'fancy'
+"let g:Powerline_theme       = 'solarized256'
+"let g:Powerline_colorscheme = 'solarized256'
+
+
+">>>>>>> 71542cc3b5fa1c9c4fed5f4237b1fda1b7752d85
 
 " plugin settings
 let g:ctrlp_match_window = 'order:ttb,max:20'
@@ -410,95 +486,5 @@ endif
 if filereadable(expand("~/.vimrc.after"))
   source ~/.vimrc.after
 endif
-"===============================================================
-"Bundle 'gmarik/vundle'
-
-"Bundle 'Rainbow-Parentheses-Improved-and2'
-"let g:rainbow_active    = 1
-"let g:rainbow_operators = 1
-"Bundle 'amdt/vim-niji'  " fail
-"Bundle 'kien/rainbow_parentheses.vim'  " untested
-Bundle 'oblitum/rainbow'
-au FileType ruby,c,cpp,objc,objcpp call rainbow#load()
-
-" Needs a git subtree add, have local mods
-"Bundle 'rainbow-end'
-"au FileType ruby call RainbowEndOn()
-
-Bundle 'tpope/vim-unimpaired'
-Bundle 'sjl/gundo.vim'
-Bundle 'flazz/vim-colorschemes'
-Bundle 'milkypostman/vim-togglelist'
-Bundle 'vim-scripts/AnsiEsc.vim'
-Bundle 'sjl/vitality.vim'
-"Bundle 'maxbrunsfeld/vim-yankstack'
-
-Bundle 'YankRing.vim'
-nnoremap <silent> <F1> :YRShow<CR>
-"let g:yankring_replace_n_pkey = '<m-p>'
-"let g:yankring_replace_n_nkey = '<m-n>'
-
-"Bundle 'Valloric/YouCompleteMe'
-"Bundle 'tpope/vim-eunuch'
-"Bundle 'vim-scripts/renamer'
-
-Bundle 'openssl.vim'
-let g:openssl_backup = 1
-
-
-Bundle 'jpalardy/vim-slime'
-let g:slime_target = "tmux"
-let g:slime_default_config = {"socket_name": "default", "target_pane": "6"}
-
-Bundle 'altercation/vim-colors-solarized'
-"color solarized
-set background=dark
-" solarized options
-let g:solarized_termcolors  = 256
-"let g:solarized_visibility = "high"
-"let g:solarized_contrast   = "high"
-let ruby_operators          = 1
-let ruby_space_errors       = 1
-colorscheme solarized
-
-Bundle 'airblade/vim-gitgutter'
-
-Bundle 'Lokaltog/vim-easymotion'
-
-Bundle 'vim-scripts/restore_view.vim'
-set viewoptions=cursor,folds,slash,unix
-" let g:skipview_files = ['*\.vim']
-
-Bundle 'kien/ctrlp.vim'
-let g:ctrlp_map = '<c-w>'
-let g:ctrlp_cmd = 'CtrlP'
-
-Bundle 'godlygeek/tabular'
-" plugin usage:
-"   :Tabularize /=                    to align on =
-
-"Bundle 'Lokaltog/powerline'
-Bundle 'Lokaltog/vim-powerline'
-" need the droid slashed for powerline
-" http://alexyoung.org/2012/01/13/using-powerline-with-mac-os/
-"let g:Powerline_symbols = 'unicode'
-let g:Powerline_symbols = 'fancy'
-let g:Powerline_theme       = 'solarized256'
-let g:Powerline_colorscheme = 'solarized256'
-
-filetype plugin indent on     " required for vundle
-
-Bundle 'vim-voom/VOoM'
-
-Bundle 'zhaocai/GoldenView.Vim'
-" 1. split to tiled windows
-nmap <silent> <C-L>  <Plug>GoldenViewSplit
-
-" 2. quickly switch current window with the main pane and toggle back
-nmap <silent> <F8>   <Plug>GoldenViewSwitchMain
-nmap <silent> <S-F8> <Plug>GoldenViewSwitchToggle
-
-" 3. jump to next and previous window
-nmap <silent> <C-N>  <Plug>GoldenViewNext
-nmap <silent> <C-P>  <Plug>GoldenViewPrevious
-">>>>>>> 71542cc3b5fa1c9c4fed5f4237b1fda1b7752d85
+" ensure ftdetect et al work by including this after the Vundle stuff
+filetype plugin indent on

@@ -94,15 +94,12 @@ set encoding=utf-8
 set laststatus=2
 "set t_Sf=[3%dm
 "set t_Sb=[4%dm
-     "set t_Sf=^[[3%dm
-     "set t_Sb=^[[4%dm
-     "    set t_Co=8
-     "    set t_Sf=^[[3%p1%dm
-     "    set t_Sb=^[[4%p1%dm
-     "  else
-     "    set t_Co=8
-     "    set t_Sf=^[[3%dm
-     "    set t_Sb=^[[4%dm
+"set t_Sf=^[[3%dm
+"set t_Sb=^[[4%dm
+"set t_Co=8
+"else
+"  set t_Sf=^[[3%p1%dm
+"  set t_Sb=^[[4%p1%dm
 "color calmar256-dark
 "color solarized
 set background=dark
@@ -139,7 +136,7 @@ nnoremap <silent> <F8> :set hls!<CR>  " Highlighting of search terms
 map <silent> <F9> :NERDTreeToggle<CR>
 nnoremap map <silent> <F9> :NERDTreeToggle<CR>
 "nnoremap <silent> <F8> :TlistToggle<CR>  " ctrl-w ctrl-w to switch pane
-:nmap <C-N><C-N> :set invnumber<CR>
+nmap <C-N><C-N> :set invnumber<CR>
 
 
 "map <silent> <leader>N :set number!<CR>
