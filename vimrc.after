@@ -108,8 +108,9 @@ let g:solarized_termcolors = 256
 let g:solarized_visibility = "high"
 let g:solarized_contrast = "high"
 colorscheme solarized
-set list listchars=tab:>-,trail:_
-set rnu
+"colorscheme monokai
+"set list listchars=tab:>-,trail:_
+set rnu   
 
 " Keystroke mappings ------------------------------------------------------
 
@@ -136,12 +137,12 @@ nnoremap <silent> <F8> :set hls!<CR>  " Highlighting of search terms
 map <silent> <F9> :NERDTreeToggle<CR>
 nnoremap map <silent> <F9> :NERDTreeToggle<CR>
 "nnoremap <silent> <F8> :TlistToggle<CR>  " ctrl-w ctrl-w to switch pane
-nmap <C-N><C-N> :set invnumber<CR>
+"nmap <C-N><C-N> :set invnumber<CR>
 
 
-"map <silent> <leader>N :set number!<CR>
-"map <silent> <leader>n :set rnu!<CR>
-nnoremap <leader>n :NumbersToggle<CR>
+map <silent> <leader>N :set number!<CR>
+map <silent> <leader>n :set rnu!<CR>
+"nnoremap <leader>n :NumbersToggle<CR>
 map <silent> <leader>cf <Esc><C-V>}I#<Esc><CR>
 nnoremap s xph
 
@@ -240,6 +241,20 @@ autocmd InsertLeave * match BadWhitespace /\s\+$/
 highlight BadWhitespace ctermbg=1
 " Remove trailing whitespace on <leader>S
 nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
+
+" set working directory
+autocmd BufEnter * silent! lcd %:p:h
+
+
+" Always add the current file's directory to the path and tags list if not
+" already there. Add it to the beginning to speed up searches.
+let s:default_path = escape(&path, '\ ') " store default value of 'path'
+autocmd BufRead *
+      \ let s:tempPath=escape(escape(expand("%:p:h"), ' '), '\ ') |
+      \ exec "set path-=".s:tempPath |
+      \ exec "set path-=".s:default_path |
+      \ exec "set path^=".s:tempPath |
+      \ exec "set path^=".s:default_path
 
 " :BundleList          - list configured bundles
 " :BundleInstall(!)    - install(update) bundles

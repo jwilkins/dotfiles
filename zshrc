@@ -7,19 +7,18 @@ export ANTIGEN="$HOME/.antigen/"
 
 source $ANTIGEN/antigen.zsh
 antigen use oh-my-zsh
-antigen bundle <<EOB
-  zsh-users/zsh-syntax-highlighting
-  jimhester/per-directory-history
-  colored-man
-  last-working-dir
-  tmux
-EOB
-#  nojhan/liquidprompt
-  #bling/vim-airline
-#  Lokaltog/powerline powerline/bindings/zsh
-#antigen-theme Lokaltog/powerline powerline
-#antigen-theme bling/vim-airline
-#antigen-theme jeremyFreeAgent/oh-my-zsh-powerline-theme powerline
+#antigen bundle jimeh/tmuxifier
+#antigen bundle zsh-users/zsh-syntax-highlighting
+#antigen bundle jimhester/per-directory-history
+#antigen bundle colored-man
+#antigen bundle last-working-dir
+#antigen bundle tmux
+##  nojhan/liquidprompt
+#  #bling/vim-airline
+##  Lokaltog/powerline powerline/bindings/zsh
+##antigen-theme Lokaltog/powerline powerline
+##antigen-theme bling/vim-airline
+##antigen-theme jeremyFreeAgent/oh-my-zsh-powerline-theme powerline
 antigen apply
 
 source $HOME/.liquidprompt/liquidprompt
@@ -58,10 +57,11 @@ if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
 #source /usr/local/opt/chruby/share/chruby/auto.sh
 #chruby 2
 
+#[[ -x tmuxifer ]] && eval "$(tmuxifier init -)"
 # rbenv ---------------------------------
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
-[[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
+#[[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
 
 alias t='tmux -2'
 alias tl='tmux ls'

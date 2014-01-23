@@ -124,7 +124,6 @@ set viminfo='50,\"100,:50,%,n~/.viminfo
 
 " Keystroke mappings ------------------------------------------------------
 
-set macmeta
 let mapleader=","
 
 nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
@@ -225,16 +224,16 @@ autocmd FileType ruby compiler ruby
 
 
 " colors for tabs
-hi TabLine      cterm=NONE       ctermbg=NONE        ctermfg=lightgrey
-" file name of selected tab (GUI default is bold black on white)
-hi TabLineSel   cterm=NONE,bold  ctermbg=NONE        ctermfg=red
-" fillup and tab-delete "X" at right
-hi TabLineFill  cterm=NONE       ctermbg=NONE        ctermfg=red
-" tab and file number 1:2/3 (meaning "tab 1: window 2 of 3) for selected tab
-hi User1        cterm=none       ctermbg=green       ctermfg=black
-" tab and file number 1:2/3 for unselected tab
-hi User2        cterm=none       ctermbg=lightgrey   ctermfg=black
-set iskeyword=48-57,65-90,97-122
+"hi TabLine      cterm=NONE       ctermbg=NONE        ctermfg=lightgrey
+"" file name of selected tab (GUI default is bold black on white)
+"hi TabLineSel   cterm=NONE,bold  ctermbg=NONE        ctermfg=red
+"" fillup and tab-delete "X" at right
+"hi TabLineFill  cterm=NONE       ctermbg=NONE        ctermfg=red
+"" tab and file number 1:2/3 (meaning "tab 1: window 2 of 3) for selected tab
+"hi User1        cterm=none       ctermbg=green       ctermfg=black
+"" tab and file number 1:2/3 for unselected tab
+"hi User2        cterm=none       ctermbg=lightgrey   ctermfg=black
+"set iskeyword=48-57,65-90,97-122
 
 
 " Strip the newline from the end of a string
@@ -278,7 +277,7 @@ highlight BadWhitespace ctermbg=1
 " Remove trailing whitespace on <leader>S
 nnoremap <leader>S ms :%s/\s\+$//<cr>:let @/=''<CR>'s
 "set list listchars=tab:>-,trail:_
-set list listchars=tab:»·,trail:·
+"set list listchars=tab:»·,trail:·
 
 " Maximum Awesome stuff? ------------------------
 set autoindent
@@ -397,8 +396,8 @@ let g:openssl_backup = 1
 set background=dark
 " solarized options
 let g:solarized_termcolors  = 256
-"let g:solarized_visibility = "high"
-"let g:solarized_contrast   = "high"
+let g:solarized_visibility = "high"
+let g:solarized_contrast   = "high"
 let ruby_operators          = 1
 let ruby_space_errors       = 1
 "colorscheme solarized
