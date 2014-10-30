@@ -120,7 +120,7 @@ if [[ $(uname) == Darwin ]] && which brew > /dev/null; then
   export PATH="`brew --prefix`/opt/coreutils/libexec/gnubin:${PATH}"
   export MANPATH="`brew --prefix`/opt/coreutils/libexec/gnuman:${MANPATH}"
   export PKG_CONFIG_PATH=/usr/local/opt/curl/lib/pkgconfig:$PKG_CONFIG_PATH
-  alias ls="/Users/jwilkins/bin/ls -aCh --color=always -G --time-style='+%Y%m%d %H:%M:%S'"
+  #alias ls="/Users/jwilkins/bin/ls -aCh --color=always -G --time-style='+%Y%m%d %H:%M:%S'"
   #export DOCKER_HOST=tcp://192.168.11.180:4243
   #export MAGIC=/usr/local/Cellar/libmagic/5.18/share/misc/magic.mgc
   # The next line updates PATH for the Google Cloud SDK.
@@ -159,9 +159,11 @@ bindkey "^B" backward-word
 bindkey "^W" forward-word
 
 # color ls, auto pagination if page is longer than screen
+if [[ -x /usr/local/bin/gls ]]; then
 ll() {
-  ls -aCh --color=always $* -- | less -JREX
+  /usr/local/bin/gls -aCh --color=always $* -- | less -JREX
 }
+fi
 
 export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:/opt/bro/bin"
@@ -181,22 +183,19 @@ unsetopt IGNORE_EOF
 #zle-line-init () {auto-fu-init;}; zle -N zle-line-init
 #zle -N zle-keymap-select auto-fu-zle-keymap-select
 
-set_terminal_tab_title() {
-  print -Pn "\e]1;$1:q\a"
-}
-
+set_terminal_tab_title() { print -Pn "\e]1;$1:q\a" }
 indicate_tmux_session_in_terminal() {
   set_terminal_tab_title "$(tmux display-message -p '#S:#I:#P')"
 }
 precmd_functions=($precmd_functions indicate_tmux_session_in_terminal)
 
-if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+#if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
 
-chruby 2.1.2
+#chruby 2.1.2
 
 #source /Users/jwilkins/.nix-profile/etc/profile.d/nix.sh
-#export VS_HOME=$HOME/vs    # or other directory
-#. $HOME/.vs/bootstrap.sh
+export VS_HOME=$HOME/vs    # or other directory
+$HOME/.vs/bootstrap.sh
 #
 #
 #if [ -z "$TMUX" ]; then # we're not in a tmux session
