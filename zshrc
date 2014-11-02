@@ -10,9 +10,13 @@ export VIDIR_EDITOR_ARGS='-c :set nolist | :set ft=vidir-ls'
 export LESS='-RJ'
 
 # zsh options ----------------------------------------------
+#source /usr/local/opt/zshdb/share/zshdb/dbg-trace.sh
+
+autoload -U add-zsh-hook
+
 unalias run-help
-autoload run-help
-HELPDIR=/usr/local/share/zsh/helpfiles
+autoload -U run-help
+HELPDIR=$HELPDIR:/usr/local/share/zsh/help
 
 # zsh modules
 zmodload zsh/regex
@@ -33,8 +37,28 @@ export ZSH_TMUX_AUTOCONNECT=false
 export ZSH_TMUX_AUTOSTART=true
 export ZSH_TMUX_AUTOQUIT=false
 
-export SSH_ASKPASS=/usr/libexec/ssh-askpass
-export SSH_AUTH_SOCK="${HOME}/.ssh/.auth_socket"
+if [[ -z "$SSH_TTY" ]]; then
+  export SSH_ENVIRONMENT="${HOME}/.ssh/.environment"
+  if [[ -f ${SSH_ENVIRONMENT} ]]; then
+    eval `cat ${SSH_ENVIRONMENT}`
+    `env | grep SSH >! /Users/jwilkins/.ssh/zshdebug`
+    export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
+    export SSH_AGENT_PID=$SSH_AGENT_PID
+    # if agent process is running and socket is present use existing auth session
+    if [[ -n $SSH_AGENT_PID ]] && [[ 0 -lt $SSH_AGENT_PID ]] && 
+       [[ ! `ps p $SSH_AGENT_PID > /dev/null` ]]; then
+    else
+      export SSH_ASKPASS=/usr/libexec/ssh-askpass
+      export SSH_AUTH_SOCK="${HOME}/.ssh/.auth_socket"
+      if [[ -S "$SSH_AUTH_SOCK" ]]; then
+        rm  "$SSH_AUTH_SOCK"
+      fi;
+      ssh-agent -a $SSH_AUTH_SOCK -s | grep -v 'echo Agent' >! $SSH_ENVIRONMENT
+      echo $SSH_AGENT_PID >! "$HOME/.ssh/.auth_pid"
+      ssh-add ~/.ssh/satoshi_blockstream
+    fi
+  fi
+fi
 
 
 # Antigen --------------------------------------------------
@@ -44,20 +68,21 @@ if [[ ! -d $ANTIGEN ]]; then
   git clone https://github.com/zsh-users/antigen.git $ANTIGEN
 fi
 
-zstyle :omz:plugins:ssh-agent agent-forwarding on
 
 source $ANTIGEN/antigen.zsh
 antigen use oh-my-zsh
+antigen bundle zsh-users/fizsh
+antigen bundle zsh-users/zaw
 antigen bundle colored-man
 antigen bundle fasd
 antigen bundle tmux
-antigen bundle chruby
-antigen bundle ssh-agent
+#antigen bundle chruby
+#antigen bundle ssh-agent
 
 #antigen bundle pyenv
 #
-antigen bundle bendemaree/zsh-vibrantink
-antigen bundle hchbaw/auto-fu.zsh
+#antigen bundle bendemaree/zsh-vibrantink
+#antigen bundle hchbaw/auto-fu.zsh
 antigen bundle jimeh/tmuxifier
 antigen bundle jimhester/per-directory-history
 antigen bundle nojhan/liquidprompt
@@ -79,7 +104,7 @@ fi
 
 # syntax highlighting
 # Use zcompiled version instead
-#antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-syntax-highlighting
 
 antigen apply
 
@@ -93,14 +118,15 @@ if [[ $CURRENT_OS == 'OS X' ]]; then
   export JAVA_HOME='/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home'
 fi
 
-# grc -------
-# GRC colorizes nifty unix tools all over the place
-if $(grc &>/dev/null)
-then
-  GRC=`which grc`
-  if [ "$TERM" != dumb ] && [ -n GRC ]
-  then
-    alias colourify="$GRC -es --colour=auto"
+# colorization -------
+# ccze and grc colorize unix tools output
+if $(which grc &>/dev/null); then
+  export COLORIZER=`which grc`
+  if [[ "$TERM" != "dumb" ]] && [[ -n $COLORIZER ]]; then
+    alias colourify="$COLORIZER -es --colour=auto" # for grc
+    #function colourify { `$@` | $COLORIZER -A }
+    #alias colourify="$COLORIZER -A " # for ccze
+    alias colourify=colourify
     alias configure='colourify ./configure'
     alias diff='colourify diff'
     alias make='colourify make'
@@ -191,57 +217,6 @@ precmd_functions=($precmd_functions indicate_tmux_session_in_terminal)
 
 #if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
 
-#chruby 2.1.2
-
 #source /Users/jwilkins/.nix-profile/etc/profile.d/nix.sh
 export VS_HOME=$HOME/vs    # or other directory
-$HOME/.vs/bootstrap.sh
-#
-#
-#if [ -z "$TMUX" ]; then # we're not in a tmux session
-#  echo "tmux not running" >! /tmp/zshout
-#else
-#  echo "tmux is $TMUX" >! /tmp/zshout
-#fi
-#  if [ ! -z "$SSH_TTY" ]; then
-#    echo "Connected via $SSH_TTY, not starting another ssh-agent"
-#  else
-#    echo "ssh tty is $SSH_TTY" >> /tmp/zshout
-##
-#    # if ssh auth variable is missing
-#    if [ -z "$SSH_AUTH_SOCK" ]; then
-#      echo "setting auth_socket" >> /tmp/zshout
-#      export SSH_AUTH_SOCK="$HOME/.ssh/.auth_socket"
-#    fi
-#
-#    # if socket is available create the new auth session
-#    #if [ ! -S "$SSH_AUTH_SOCK" ]; then
-#    #  echo "writing auth_pid" >> /tmp/zshout
-#      #`ssh-agent -a $SSH_AUTH_SOCK` > /dev/null 2>&1
-#      #echo $SSH_AGENT_PID > "$HOME/.ssh/.auth_pid"
-#    #fi
-#
-#    # if agent isn't defined, recreate it from pid file
-#    if [ -z $SSH_AGENT_PID ] || [[ '' -eq $SSH_AGENT_PID ]]; then
-#      if [ -f "$HOME/.ssh/.auth_pid" ]; then
-#        export SSH_AGENT_PID=`cat "$HOME/.ssh/.auth_pid"`
-#        if [ -n $SSH_AGENT_PID ]; then
-#          if [ `ps -p $SSH_AGENT_PID` ]; then
-#            echo "ssh-agent running: pid $SSH_AGENT_PID"
-#          fi
-#        else
-#          rm "$HOME/.ssh/.auth_pid"
-#            `ssh-agent  -a $SSH_AUTH_SOCK` < /dev/null 2>&1 
-#            echo "setting auth_pid" >> /tmp/zshout
-#            echo $SSH_AGENT_PID > "$HOME/.ssh/.auth_pid"
-#        fi
-#      fi
-#    fi
-#
-#    # Add all default keys to ssh auth
-#    ssh-add 2>/dev/null
-#  fi
-##fi
-#
-#
-#
+. $HOME/.vs/bootstrap.sh
