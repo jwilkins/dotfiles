@@ -261,11 +261,11 @@ autocmd BufRead *
 "set rtp+=~/.janus/bundle/vundle/
 "call vundle#rc()
 
-Bundle 'gmarik/vundle'
+"Bundle 'gmarik/vundle'
 "Bundle 'Valloric/YouCompleteMe'
 "Bundle 'tpope/vim-eunuch'
 "Bundle 'airblade/vim-gitgutter'
 "Bundle 'vim-scripts/renamer'
 
-filetype plugin indent on     " required for vundle
+"filetype plugin indent on     " required for vundle
 

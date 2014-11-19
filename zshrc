@@ -1,16 +1,15 @@
+start_time="$(date +%s)"
 ulimit -u 1024
 ulimit -n 1024
 #source ~/.fresh/build/shell.sh
-
+#
 # Environment ----------------------------------------------
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-export EDITOR=vim
-export VIDIR_EDITOR_ARGS='-c :set nolist | :set ft=vidir-ls'
-export LESS='-RJ'
-
 # zsh options ----------------------------------------------
 #source /usr/local/opt/zshdb/share/zshdb/dbg-trace.sh
+
+autoload edit-command-line && zle -N edit-command-line
 
 autoload -U add-zsh-hook
 
@@ -18,6 +17,7 @@ unalias run-help
 autoload -U run-help
 HELPDIR=$HELPDIR:/usr/local/share/zsh/help
 
+autoload -U compinit 
 # zsh modules
 zmodload zsh/regex
 zmodload zsh/pcre
@@ -30,24 +30,23 @@ setopt path_dirs
 setopt nobeep
 setopt nohup
 setopt listtypes
-
-export DISABLE_AUTO_UPDATE=true
-
-export ZSH_TMUX_AUTOCONNECT=false
-export ZSH_TMUX_AUTOSTART=true
-export ZSH_TMUX_AUTOQUIT=false
+setopt noclobber
 
 if [[ -z "$SSH_TTY" ]]; then
   export SSH_ENVIRONMENT="${HOME}/.ssh/.environment"
   if [[ -f ${SSH_ENVIRONMENT} ]]; then
     eval `cat ${SSH_ENVIRONMENT}`
-    `env | grep SSH >! /Users/jwilkins/.ssh/zshdebug`
     export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
     export SSH_AGENT_PID=$SSH_AGENT_PID
-    # if agent process is running and socket is present use existing auth session
+    # if agent process is running & socket is present use existing session
     if [[ -n $SSH_AGENT_PID ]] && [[ 0 -lt $SSH_AGENT_PID ]] && 
        [[ ! `ps p $SSH_AGENT_PID > /dev/null` ]]; then
-    else
+       SSH_AGENT_OK=1;
+       echo -n "";
+    fi
+  fi
+  
+  if [[ -z $SSH_AGENT_OK ]] ; then
       export SSH_ASKPASS=/usr/libexec/ssh-askpass
       export SSH_AUTH_SOCK="${HOME}/.ssh/.auth_socket"
       if [[ -S "$SSH_AUTH_SOCK" ]]; then
@@ -57,9 +56,8 @@ if [[ -z "$SSH_TTY" ]]; then
       echo $SSH_AGENT_PID >! "$HOME/.ssh/.auth_pid"
       ssh-add ~/.ssh/satoshi_blockstream
     fi
-  fi
-fi
 
+fi
 
 # Antigen --------------------------------------------------
 export ANTIGEN="$HOME/.antigen/"
@@ -71,8 +69,8 @@ fi
 
 source $ANTIGEN/antigen.zsh
 antigen use oh-my-zsh
-antigen bundle zsh-users/fizsh
-antigen bundle zsh-users/zaw
+#antigen bundle zsh-users/fizsh
+#antigen bundle zsh-users/zaw
 antigen bundle colored-man
 antigen bundle fasd
 antigen bundle tmux
@@ -105,8 +103,10 @@ fi
 # syntax highlighting
 # Use zcompiled version instead
 antigen bundle zsh-users/zsh-syntax-highlighting
+#antigen bundle tarruda/zsh-autosuggestions
+# history-substring must be after syntax
+#antigen bundle zsh-users/zsh-history-substring-search
 
-antigen apply
 
 #antigen bundle last-working-dir # gives errors on cd
 ##  Lokaltog/powerline powerline/bindings/zsh
@@ -114,19 +114,29 @@ antigen apply
 ##antigen-theme bling/vim-airline
 ##antigen-theme jeremyFreeAgent/oh-my-zsh-powerline-theme powerline
 
-if [[ $CURRENT_OS == 'OS X' ]]; then
-  export JAVA_HOME='/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home'
-fi
+antigen apply
+#zle-line-init() {
+#    zle autosuggest-start
+#}
+#zle -N zle-line-init
+# use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
+# zsh-autosuggestions is designed to be unobtrusive)
+#bindkey '^T' autosuggest-toggle
+#bindkey '\t' vi-forward-word
+
+#bindkey -M menuselect "+" accept-and-menu-complete
+#setopt menu_complete
 
 # colorization -------
 # ccze and grc colorize unix tools output
 if $(which grc &>/dev/null); then
-  export COLORIZER=`which grc`
+  export COLORIZER="`which grc` -es --colour=auto"
   if [[ "$TERM" != "dumb" ]] && [[ -n $COLORIZER ]]; then
-    alias colourify="$COLORIZER -es --colour=auto" # for grc
-    #function colourify { `$@` | $COLORIZER -A }
+    #alias colourify="$COLORIZER -es --colour=auto" # for grc
+    #alias colourify="$COLORIZER -es --colour=auto" # for grc
+    function colourify { `$@` | $COLORIZER -A }
     #alias colourify="$COLORIZER -A " # for ccze
-    alias colourify=colourify
+    #alias colourify=colourify
     alias configure='colourify ./configure'
     alias diff='colourify diff'
     alias make='colourify make'
@@ -173,16 +183,31 @@ if which direnv > /dev/null; then eval "$(direnv hook zsh)"; fi
 
 function mcd(){ mkdir -p $1 && cd $1 }
 
+zle_default_mode='ins'
+psvmodeidx='1'
+zle_use_ctrl_d='yes'
+zle_ins_more_like_emacs='yes'
+
 bindkey -v
-bindkey "^L" redisplay
-bindkey "^R" history-incremental-search-backward
-bindkey "^N" vi-down-line-or-history
+bindkey -d     # flush
 
-bindkey "^A" beginning-of-line
-bindkey "^E" end-of-line
+bindkey -M viins '^i' edit-command-line
+bindkey -M vicmd '^i' edit-command-line
+bindkey -M viins '\t' complete-word
+bindkey -M vicmd '\t' complete-word
 
-bindkey "^B" backward-word
-bindkey "^W" forward-word
+bindkey -M viins "^L" redisplay
+bindkey -M vicmd "^L" redisplay
+
+bindkey -M viins "^A" beginning-of-line
+bindkey -M vicmd "^A" beginning-of-line
+bindkey -M viins "^E" end-of-line
+bindkey -M vicmd "^E" end-of-line
+bindkey -M viins "^B" backward-word
+bindkey -M viins "^W" forward-word
+
+bindkey -M viins "^R" history-incremental-search-backward
+bindkey -M viins "^N" vi-down-line-or-history
 
 # color ls, auto pagination if page is longer than screen
 if [[ -x /usr/local/bin/gls ]]; then
@@ -220,3 +245,5 @@ precmd_functions=($precmd_functions indicate_tmux_session_in_terminal)
 #source /Users/jwilkins/.nix-profile/etc/profile.d/nix.sh
 export VS_HOME=$HOME/vs    # or other directory
 . $HOME/.vs/bootstrap.sh
+end_time="$(date +%s)"
+echo ".zshrc: $((end_time - start_time)) seconds"
