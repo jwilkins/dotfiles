@@ -20,9 +20,7 @@ Create fake host repository
 
 Create a normal repository cloning from host
 
-  $ git clone $TEST_HOST $TEST_NORMAL
-  Cloning into * (glob)
-  done.
+  $ git clone $TEST_HOST $TEST_NORMAL &> /dev/null
 
 Create a submodule repository cloning from host
 
@@ -30,9 +28,7 @@ Create a submodule repository cloning from host
   $ cd $TEST_SUBMODULE
   $ git init
   Initialized empty Git repository in * (glob)
-  $ git submodule add $TEST_HOST antigen
-  Cloning into 'antigen'...
-  done.
+  $ git submodule add $TEST_HOST antigen &> /dev/null
   $ git commit -m "1"
   [master (root-commit) ???????] 1 (glob)
    2 files changed, 4 insertions(+)

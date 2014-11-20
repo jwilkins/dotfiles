@@ -15,9 +15,6 @@ local _ANTIGEN_INSTALL_DIR="$(cd "$(dirname "$0")" && pwd)"
 typeset -a __deferred_compdefs
 compdef () { __deferred_compdefs=($__deferred_compdefs "$*") }
 
-# bsd/osx md5 v.s. linux md5sum
-chksum() { (md5sum; test $? = 127 && md5) 2>/dev/null | cut -d' ' -f1 }
-
 # Syntaxes
 #   antigen-bundle <url> [<loc>=/]
 # Keyword only arguments:
@@ -76,7 +73,7 @@ antigen-bundle () {
     fi
 
     # Load the plugin.
-    -antigen-load "$url" "$loc" "$btype" "$make_local_clone"
+    -antigen-load "$url" "$loc" "$make_local_clone"
 
 }
 
@@ -89,6 +86,8 @@ antigen-bundle () {
     # Expand short github url syntax: `username/reponame`.
     if [[ $url != git://* &&
             $url != https://* &&
+            $url != http://* &&
+            $url != ssh://* &&
             $url != /* &&
             $url != git@github.com:*/*
             ]]; then
@@ -256,21 +255,17 @@ antigen-revert () {
 
     local url="$1"
     local loc="$2"
-    local btype="$3"
-    local make_local_clone="$4"
+    local make_local_clone="$3"
 
     # The full location where the plugin is located.
     local location
     if $make_local_clone; then
         location="$(-antigen-get-clone-dir "$url")/$loc"
     else
-        location="$url"
+        location="$url/$loc"
     fi
 
-    if [[ $btype == theme ]]; then
-
-        # Of course, if its a theme, the location would point to the script
-        # file.
+    if [[ -f "$location" ]]; then
         source "$location"
 
     else
@@ -497,7 +492,9 @@ antigen-snapshot () {
         echo -n " created_on='$(date)';"
 
         # Add a checksum with the md5 checksum of all the snapshot lines.
+        chksum() { (md5sum; test $? = 127 && md5) 2>/dev/null | cut -d' ' -f1 }
         local checksum="$(echo "$snapshot_content" | chksum)"
+        unset -f chksum;
         echo -n " checksum='${checksum%% *}';"
 
         # A newline after the metadata and then the snapshot lines.
@@ -530,10 +527,10 @@ antigen-restore () {
             local clone_dir="$(-antigen-get-clone-dir "$url")"
 
             if [[ ! -d $clone_dir ]]; then
-                git clone "$url" "$clone_dir" > /dev/null
+                git clone "$url" "$clone_dir" &> /dev/null
             fi
 
-            (cd "$clone_dir" && git checkout $version_hash) 2> /dev/null
+            (cd "$clone_dir" && git checkout $version_hash) &> /dev/null
 
         done
 

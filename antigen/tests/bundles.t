@@ -1,10 +1,6 @@
 Add multiple bundles.
 
-  $ echo "$PLUGIN_DIR\n$PLUGIN_DIR2" | antigen-bundles
-  Cloning into '.+?'\.\.\. (re)
-  done.
-  Cloning into '.+?'\.\.\. (re)
-  done.
+  $ echo "$PLUGIN_DIR\n$PLUGIN_DIR2" | antigen-bundles &> /dev/null
 
 Check if they are both applied.
 
@@ -20,11 +16,7 @@ Clean it all up.
 
 Specify with indentation.
 
-  $ echo "  $PLUGIN_DIR\n  $PLUGIN_DIR2" | antigen-bundles
-  Cloning into '.+?'\.\.\. (re)
-  done.
-  Cloning into '.+?'\.\.\. (re)
-  done.
+  $ echo "  $PLUGIN_DIR\n  $PLUGIN_DIR2" | antigen-bundles &> /dev/null
 
 Again, check if they are both applied.
 

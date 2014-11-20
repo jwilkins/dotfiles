@@ -1,4 +1,4 @@
-# Antigen <sup>&beta;</sup>
+# Antigen <sup>v1</sup>
 
 [![Build Status](https://secure.travis-ci.org/zsh-users/antigen.png)](http://travis-ci.org/zsh-users/antigen)
 
@@ -6,8 +6,10 @@ Antigen is a small set of functions that help you easily manage your shell (zsh)
 plugins, called bundles. The concept is pretty much the same as bundles in a
 typical vim+pathogen setup. Antigen is to zsh, what [Vundle][] is to vim.
 
-Please note that this is a very new project and can be considered beta at best.
-That said, I am using antigen full time now on my work machine.
+> [Donate to Antigen](https://gum.co/antigen)
+
+Antigen has reached a certain level of stability and has been used in the wild
+for around a couple of years. If you face any problems, please open an issue.
 
 Note: Please read the commit comments of the changesets when you pull a new
 version of antigen.
@@ -23,7 +25,7 @@ sample, if you will.
 
 Get and load antigen.
 
-    curl https://raw.github.com/zsh-users/antigen/master/antigen.zsh > antigen.zsh
+    curl -L https://raw.githubusercontent.com/zsh-users/antigen/master/antigen.zsh > antigen.zsh
     source antigen.zsh
 
 There. You now have all the antigen goodies. Let's try install some plugins. How
@@ -95,7 +97,7 @@ git repo,
 The usage should be very familiar to you if you use Vundle. A typical `.zshrc`
 might look like this
 
-    source /path-to-antigen clone/antigen.zsh
+    source /path-to-antigen-clone/antigen.zsh
 
     # Load the oh-my-zsh's library.
     antigen use oh-my-zsh
@@ -175,7 +177,8 @@ where `<url>` is the repository url and it defaults to [robbyrussell's
 oh-my-zsh][oh-my-zsh] repo (can be changed by setting `ANTIGEN_DEFAULT_REPO_URL`
 discussed further down). `<loc>` is the path under this repository which has the
 zsh plugin. This is typically the directory that contains a `*.plugin.zsh` file,
-but it could contain a completion file or just many `*.zsh` files to be sourced.
+but it could contain a completion file or just many `*.zsh` files to be sourced,
+or it could simply be a file (with any extension) that you want to source.
 `<loc>` defaults to `/`, which indicates the repository itself is a plugin.
 
 An example invocation would be
@@ -433,6 +436,9 @@ before experimenting with themes. If you have `antigen use oh-my-zsh` in your
 **Note**: Do *not* provide the `--btype` argument to `antigen theme`. Its an
 internal argument.
 
+*For the interested, you can read more details on the purpose & workings of the
+`theme` command on the comments of issue #78.*
+
 ### antigen apply
 
 You have to add this command after defining all bundles you need, in your zshrc.
@@ -581,11 +587,18 @@ To contribute, please read the [contributing wiki page][contributing] before
 sending pull requests. If its a long/complicated change, please consider opening
 an [issue][] first so we can discuss it out. Thanks!
 
+You may also wish to [donate to the project](https://gum.co/antigen). Thank you
+so much!
+
 ### Feedback please
 
 Any comments/suggestions/feedback welcome. Please say hello to me
 ([@sharat87][twitter]) on twitter. Or open an issue to discuss something
 (anything!) about the project ;).
+
+### Alternatives to antigen
+
+  * [antigen-hs] - An antigen-inspired zsh plugin manager that tries to do work statically and only on manual invocation, minimizing the zsh startup time. Antigen-hs is much more minimalistic and convention over configuration than antigen.
 
 
 [Vundle]: https://github.com/gmarik/vundle
@@ -600,3 +613,4 @@ Any comments/suggestions/feedback welcome. Please say hello to me
 [license]: http://mit.sharats.me
 [contributing]: https://github.com/zsh-users/antigen/wiki/Contributing
 [twitter]: http://twitter.com/sharat87
+[antigen-hs]: https://github.com/Tarrasch/antigen-hs

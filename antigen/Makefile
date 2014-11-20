@@ -1,7 +1,10 @@
 .PHONY: itests tests
 
+PYENV ?= . .pyenv/bin/activate &&
+TESTS ?= tests
+
 itests:
-	ZDOTDIR="${PWD}/tests" cram -i --shell=zsh tests
+	${MAKE} tests CRAM_OPTS=-i
 
 tests:
-	ZDOTDIR="${PWD}/tests" cram --shell=zsh tests
+	${PYENV} ZDOTDIR="${PWD}/tests" cram ${CRAM_OPTS} --shell=zsh ${TESTS}
