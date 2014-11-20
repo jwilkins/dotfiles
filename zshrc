@@ -169,7 +169,14 @@ alias v='vim -p '
 ##export WORKON_HOME="$HOME/.pyvenv"
 ##source /usr/local/bin/virtualenvwrapper.sh
 
-if which direnv > /dev/null; then eval "$(direnv hook zsh)"; fi
+if [[ -z `which direnv > /dev/null` ]]; then 
+  mkdir -p ~/bin
+  (cd ~/bin;
+  wget http://gobuild3.qiniudn.com/github.com/zimbatm/direnv/branch-v-master/direnv-linux-amd64.tar.gz;
+  tar zxf direnv-linux-amd64.tar.gz  )
+fi
+eval "$(direnv hook zsh)"; 
+
 
 function mcd(){ mkdir -p $1 && cd $1 }
 
