@@ -1,0 +1,201 @@
+#!/usr/bin/env zsh
+
+INPUTRC="${HOME}/.inputrc"
+if [[ ! -f ${INPUTRC} ]]; then
+cat > "${INPUTRC}  <<EOF
+# ZSH doesn't use this
+set editing-mode vi
+
+# Adds punctuation as word delimiters
+set bind-tty-special-chars off
+
+# Completion Options
+set page-completions on
+set completion-ignore-case on
+set completion-query-items 2000
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+set visible-stats on
+set history-preserve-point on
+set expand-tilde on
+
+# Useful stuff for UTF-8
+set meta-flag on
+set input-meta on
+set output-meta on
+set convert-meta off
+
+$if mode=vi
+    set keymap vi-command
+    "\C-a": beginning-of-line
+    "\C-e": end-of-line
+    "\C-l": clear-screen
+
+    "gg": beginning-of-history
+    "G": end-of-history
+
+    set keymap vi-insert
+    "\C-a": beginning-of-line
+    "\C-e": end-of-line
+    "\C-l": clear-screen
+
+    "\C-w": backward-kill-word
+    # auto-complete from the history
+    "\C-p": history-search-backward
+    "\C-n": history-search-forward
+$endif
+
+$if Bash
+$endif
+
+$if Python
+$endif
+
+# IPython needs this to appear at the bottom of the
+# file for clear-screen to work
+set keymap vi
+EOF
+fi
+
+# zsh settings --------------------------------- 
+# Use vi keybindings to edit command line
+bindkey -v
+# Let _expand do expansion instead of shell
+bindkey -M viins ' ' complete-word
+bindkey -M vicmd ' ' complete-word
+# Make backspace work
+bindkey '^?' backward-delete-char
+bindkey '^H' backward-delete-char
+# The zsh vi-kill-whole-line stops at last insert point
+bindkey '^U' kill-whole-line
+# Setup undo redo in cmd
+bindkey -M vicmd '^r' redo
+bindkey -M vicmd 'u' undo
+# Make sure that C-M vicmd and C-e do the appropriate things
+# Discovered this when using zsh inside a tmux that was inside
+# another tmux. It would just print ^A or ^E instead of doing
+# the action
+bindkey -M viins '^A' beginning-of-line
+bindkey -M viins '^E' end-of-line
+# Make C-e and C-M vicmd goto insert mode from command
+# bindkey -M vicmd '^A' vi-insert-bol
+# bindkey -M vicmd '^E' vi-add-eol
+# Alias C-n and C-p to up and down arrow
+bindkey -M viins '^P' history-beginning-search-backward
+bindkey -M viins '^N' history-beginning-search-forward
+bindkey -M vicmd '^P' history-beginning-search-backward
+bindkey -M vicmd '^N' history-beginning-search-forward
+# The viins versions of this are blown away below for faster  to vicmd
+bindkey -M vicmd 'OA' history-beginning-search-backward # Up arrow
+bindkey -M vicmd 'OB' history-beginning-search-forward # Down arrow
+# Make autocomplete cycling work like in vim
+bindkey -M menuselect '^P' reverse-menu-complete
+bindkey -M menuselect '^N' menu-complete
+bindkey -M menuselect 'OA' reverse-menu-complete
+bindkey -M menuselect 'OB' menu-complete
+# Make typing a / to go to the next path component actually finish completion
+# without inserting another /
+bindkey -M menuselect / accept-line
+# Make G go to the end of history
+bindkey -M vicmd 'G' end-of-history
+# Make Y like D and C
+bindkey -M vicmd 'Y' vi-yank-eol
+# Expansion of history
+bindkey ' ' magic-space
+# Allow editing a command inside the editor
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+# Insert literal characters
+bindkey -M viins '^v' vi-quoted-insert
+bindkey -M vicmd 'cru' up-case-word
+# This just want bound right, it sucked
+bindkey -M vicmd '~' vi-swap-case
+# Same reason as the cc, zsh seems to have problems with the repeats
+bindkey -M vicmd 'yy' vi-yank-whole-line
+# A nice try, but hasn't been useful yet
+bindkey -M vicmd 'z=' spell-word
+# Because this sometimes doesn't work as it should with vi-change
+bindkey -M vicmd 'cc' vi-change-whole-line
+# Make it really simple to forground that last suspended process before last
+# This makes it real simple to suspend vim, resume something else, suspend it and resume vim
+bindkey -s '^f' ' fg %- '
+# Much quicker switch to vicmd mode
+# It will remove all bindings that start with  except the one that is 
+bindkey -rpM viins '^['
+bindkey -M vicmd 'K' run-help
+# run command line as user root via sudo:
+function sudo-command-line() {
+[[ -z $BUFFER ]] && zle up-history
+if [[ $BUFFER != sudo\ * ]]; then
+BUFFER="sudo $BUFFER"
+CURSOR=$(( CURSOR+5 ))
+(( $+functions[_zsh_highlight] )) && _zsh_highlight
+fi
+}
+zle -N sudo-command-line
+bindkey "^Xs" sudo-command-line
+# Make it easy to remove directory components when deleting words
+function slash-backward-kill-word() {
+local WORDCHARS="${WORDCHARS:s#/#}"
+zle backward-delete-word
+}
+zle -N slash-backward-kill-word
+bindkey '^W' slash-backward-kill-word
+# Create path at cursor or in visual selection
+function inplace-mkdirs() {
+local PATHTOMKDIR
+if ((REGION_ACTIVE==1)); then
+local F=$MARK T=$CURSOR
+if [[ $F -gt $T ]]; then
+F=${CURSOR}
+T=${MARK}
+fi
+# get marked area from buffer and eliminate whitespace
+PATHTOMKDIR=${BUFFER[F+1,T]%%[[:space:]]##}
+PATHTOMKDIR=${PATHTOMKDIR##[[:space:]]##}
+else
+local bufwords iword
+bufwords=(${(z)LBUFFER})
+iword=${#bufwords}
+bufwords=(${(z)BUFFER})
+PATHTOMKDIR="$bufwords[iword]"
+fi
+# Do file name expansion and globbing as command line
+# would do when executing it normally
+PATHTOMKDIR=${~PATHTOMKDIR}
+[[ -z "${PATHTOMKDIR}" ]] && return 1
+if [[ -e "${PATHTOMKDIR}" ]]; then
+zle -M " path already exists, doing nothing"
+else
+zle -M "$(mkdir -p -v "${PATHTOMKDIR}")"
+zle end-of-line
+fi
+}
+zle -N inplace-mkdirs
+bindkey '^Xm' inplace-mkdirs
+autoload -Uz narrow-to-region
+function _history-incremental-preserving-pattern-search-backward
+{
+local state
+MARK=CURSOR # magick, else multiple ^R don't work
+narrow-to-region -p "$LBUFFER${BUFFER:+>>}" -P "${BUFFER:+<<}$RBUFFER" -S state
+zle end-of-history
+zle history-incremental-pattern-search-backward
+narrow-to-region -R state
+}
+zle -N _history-incremental-preserving-pattern-search-backward
+bindkey -M vicmd "/" _history-incremental-preserving-pattern-search-backward
+bindkey -M vicmd "?" history-incremental-pattern-search-forward
+bindkey -M viins "^R" _history-incremental-preserving-pattern-search-backward
+bindkey -M isearch "^R" history-incremental-pattern-search-backward
+bindkey -M viins "^S" history-incremental-pattern-search-forward
+# A trick to make pasting part of prompt delete itself
+bindkey -M viins   vi-kill-line
+autoload -Uz insert-files
+zle -N insert-files
+bindkey '^Xf' insert-files
+autoload -Uz insert-unicode-char
+zle -N insert-unicode-char
+bindkey '^Xu' insert-unicode-char
+# vim: ft=zsh
